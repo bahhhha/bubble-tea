@@ -1,4 +1,4 @@
-import { Divider, Modal } from "antd";
+import { Modal } from "antd";
 import { Product } from "../model";
 import Image from "next/image";
 import { Tag } from "@/shared/ui/tag/tag";

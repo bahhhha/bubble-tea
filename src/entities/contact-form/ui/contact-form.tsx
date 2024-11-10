@@ -35,7 +35,18 @@ const validationSchema = Yup.object().shape({
 });
 
 export const ContactForm = (): JSX.Element => {
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+    address: {
+      city: string;
+      streetName: string;
+      building: string;
+      doorNumber: string;
+      additionalInfo: string;
+    };
+  }) => {
     console.log(values);
   };
 

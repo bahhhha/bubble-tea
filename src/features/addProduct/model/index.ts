@@ -31,7 +31,7 @@ const $cartItems = $cart.map((cart) => {
 
 if (typeof window !== "undefined") {
   const initialCart = JSON.parse(localStorage.getItem("cart") || "[]");
-  // @ts-ignore
+  // @ts-expect-error - effector types are not up to date
   $cart.setState(initialCart);
 
   $cart.watch((state) => {
@@ -40,7 +40,7 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("storage", (event) => {
     if (event.key === "cart" && event.newValue) {
-      // @ts-ignore
+      // @ts-expect-error - effector types are not up to date
       $cart.setState(JSON.parse(event.newValue));
     }
   });
