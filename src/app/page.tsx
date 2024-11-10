@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   useGate(HomeGate);
-  const products: Product[] = useUnit(fetchGetProducts.$data ?? []);
+  const products: Product[] = useUnit(fetchGetProducts.$data) || [];
   return (
     <div className="flex gap-2 relative p-4">
       <Filter />
