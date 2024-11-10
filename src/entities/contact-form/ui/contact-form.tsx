@@ -35,21 +35,29 @@ const validationSchema = Yup.object().shape({
 });
 
 export const ContactForm = (): JSX.Element => {
-  const handleSubmit = (values: {
-    name: string;
-    email: string;
-    phoneNumber: string;
-    address: {
-      city: string;
-      streetName: string;
-      building: string;
-      doorNumber: string;
-      additionalInfo: string;
-    };
-  }) => {
-    console.log(values);
+  const handleSubmit = async (values: typeof initialValues) => {
+    try {
+      const response = await fetch("/api/submitContact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Не удалось отправить данные");
+      }
+  
+      const result = await response.json();
+      console.log("Результат:", result);
+      alert("Данные успешно отправлены!");
+    } catch (error) {
+      console.error("Ошибка при отправке данных:", error);
+      alert("Ошибка при отправке данных");
+    }
   };
-
+  
   return (
     <Formik
       initialValues={initialValues}
