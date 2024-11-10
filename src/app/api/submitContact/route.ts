@@ -1,4 +1,3 @@
-// app/api/submitContact/route.ts
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
@@ -16,9 +15,8 @@ export async function POST(request: Request) {
 
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.SPREADSHEET_ID;
-    const range = "Leads!A:M"; // Убедитесь, что указанный лист существует
+    const range = "Leads!A:M";
 
-    // Добавляем данные в таблицу
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range,
@@ -39,9 +37,15 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ message: "Данные успешно отправлены" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Данные успешно отправлены" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Ошибка при добавлении данных в Google Sheets:", error);
-    return NextResponse.json({ error: "Не удалось отправить данные" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Не удалось отправить данные" },
+      { status: 500 }
+    );
   }
 }

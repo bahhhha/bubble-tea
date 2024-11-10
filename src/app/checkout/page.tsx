@@ -1,14 +1,14 @@
 "use client";
+import { useUnit } from "effector-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import { $cart } from "@/features/addProduct/model";
 import { CartCard } from "@/entities/cart-card/ui/cart-card";
 import { ContactForm } from "@/entities/contact-form/ui/contact-form";
-import { $cartItems } from "@/features/addProduct/model";
-import { useUnit } from "effector-react";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function Checkout() {
-  const cartItems = useUnit($cartItems);
+  const cartItems = useUnit($cart);
 
   return (
     <div className="flex justify-center gap-4 h-full px-16 w-full">
@@ -19,32 +19,36 @@ export default function Checkout() {
         <ChevronLeft size={16} />
       </Link>
       <div className="w-2/3 flex flex-col gap-4">
-        <p className="text-xl font-bold bg-zinc-50 p-4 rounded-lg">Корзина</p>
+        <p className="text-xl font-bold bg-zinc-50 p-4 rounded-lg">Cart</p>
         <div className="flex gap-4 flex-wrap">
           <AnimatePresence>
-            {cartItems.map(({ product }, index) => (
+            {cartItems.map((cartItem, index) => (
               <motion.div
-                key={product.id}
+                key={cartItem.product.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                <CartCard product={product} />
+                <CartCard
+                  product={cartItem.product}
+                  quantity={cartItem.quantity}
+                />
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
       </div>
-      <div className="w-1/3 flex flex-col gap-4">
+      <div className="w-1/3">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3, delay: cartItems.length * 0.1 }}
+          className="flex flex-col gap-4"
         >
           <p className="text-xl font-bold text-white bg-[#364bfe] p-4 rounded-lg">
-            Оформление заказа
+            Checkout
           </p>
           <ContactForm />
         </motion.div>

@@ -51,7 +51,7 @@ export const ProductModal = ({ open, onClose, product }: ProductModalProps) => {
               ))}
             </div>
             <div className="flex gap-1 mt-8 w-full">
-              <Chip chipClassName="w-32">{product.price}$</Chip>
+              <Chip chipClassName="w-32">{product.retailPrice}₽</Chip>
               <Button
                 type="primary"
                 icon={<ShoppingBag size={16} />}

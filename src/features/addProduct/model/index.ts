@@ -1,49 +1,79 @@
 // cartModel.ts
-import { Product } from "@/entities/product-card/model";
+
 import { createEvent, createStore } from "effector";
+import { Product } from "@/entities/product-card/model";
 
-const productAdded = createEvent<Product>();
-const productRemoved = createEvent<Product>();
-
-const $cart = createStore<Product[]>([])
-  .on(productAdded, (state, product) => [...state, product])
-  .on(productRemoved, (state, product) => {
-    const index = state.findIndex((p) => p.id === product.id);
-    if (index !== -1) {
-      const newState = [...state];
-      newState.splice(index, 1);
-      return newState;
-    }
-    return state;
-  });
-
-const $cartItems = $cart.map((cart) => {
-  const productMap = new Map<string, { product: Product; quantity: number }>();
-  for (const product of cart) {
-    if (productMap.has(product.id)) {
-      productMap.get(product.id)!.quantity += 1;
-    } else {
-      productMap.set(product.id, { product, quantity: 1 });
-    }
-  }
-  return Array.from(productMap.values());
-});
-
-if (typeof window !== "undefined") {
-  const initialCart = JSON.parse(localStorage.getItem("cart") || "[]");
-  // @ts-expect-error - effector types are not up to date
-  $cart.setState(initialCart);
-
-  $cart.watch((state) => {
-    localStorage.setItem("cart", JSON.stringify(state));
-  });
-
-  window.addEventListener("storage", (event) => {
-    if (event.key === "cart" && event.newValue) {
-      // @ts-expect-error - effector types are not up to date
-      $cart.setState(JSON.parse(event.newValue));
-    }
-  });
+// Define the CartItem interface
+export interface CartItem {
+  product: Product;
+  quantity: number;
 }
 
-export { $cart, productAdded, productRemoved, $cartItems };
+// Events to modify the cart
+export const productAdded = createEvent<Product>();
+export const productRemoved = createEvent<Product>();
+export const productQuantitySet = createEvent<{
+  product: Product;
+  quantity: number;
+}>();
+export const cartUpdatedFromStorage = createEvent<CartItem[]>();
+
+// The cart store, an array of CartItems
+export const $cart = createStore<CartItem[]>([])
+  .on(productAdded, (state, product) => {
+    const index = state.findIndex((item) => item.product.id === product.id);
+    if (index !== -1) {
+      // Increase quantity if product already exists
+      const updatedItem = {
+        ...state[index],
+        quantity: state[index].quantity + 1,
+      };
+      return [...state.slice(0, index), updatedItem, ...state.slice(index + 1)];
+    } else {
+      // Add new product with quantity 1
+      return [...state, { product, quantity: 1 }];
+    }
+  })
+  .on(productRemoved, (state, product) => {
+    const index = state.findIndex((item) => item.product.id === product.id);
+    if (index !== -1) {
+      const newQuantity = state[index].quantity - 1;
+      if (newQuantity > 0) {
+        // Update quantity
+        const updatedItem = { ...state[index], quantity: newQuantity };
+        return [
+          ...state.slice(0, index),
+          updatedItem,
+          ...state.slice(index + 1),
+        ];
+      } else {
+        // Remove product from cart
+        return [...state.slice(0, index), ...state.slice(index + 1)];
+      }
+    }
+    return state;
+  })
+  .on(productQuantitySet, (state, { product, quantity }) => {
+    const index = state.findIndex((item) => item.product.id === product.id);
+    if (quantity > 0) {
+      if (index !== -1) {
+        // Update existing product quantity
+        const updatedItem = { ...state[index], quantity };
+        return [
+          ...state.slice(0, index),
+          updatedItem,
+          ...state.slice(index + 1),
+        ];
+      } else {
+        // Add new product with specified quantity
+        return [...state, { product, quantity }];
+      }
+    } else {
+      // Remove product if quantity is 0
+      if (index !== -1) {
+        return [...state.slice(0, index), ...state.slice(index + 1)];
+      }
+    }
+    return state;
+  })
+  .on(cartUpdatedFromStorage, (_, newCart) => newCart);

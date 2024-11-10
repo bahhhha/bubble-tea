@@ -44,11 +44,11 @@ export const ContactForm = (): JSX.Element => {
         },
         body: JSON.stringify(values),
       });
-  
+
       if (!response.ok) {
         throw new Error("Не удалось отправить данные");
       }
-  
+
       const result = await response.json();
       console.log("Результат:", result);
       alert("Данные успешно отправлены!");
@@ -57,7 +57,7 @@ export const ContactForm = (): JSX.Element => {
       alert("Ошибка при отправке данных");
     }
   };
-  
+
   return (
     <Formik
       initialValues={initialValues}
@@ -110,7 +110,7 @@ export const ContactForm = (): JSX.Element => {
               <Field name="phoneNumber">
                 {({ field }: FieldProps) => (
                   <PhoneInput
-                    country={"ae"}
+                    country={"ru"}
                     value={field.value}
                     onChange={(value: string) =>
                       setFieldValue("phoneNumber", value)
@@ -136,7 +136,6 @@ export const ContactForm = (): JSX.Element => {
                       fontFamily: "inherit",
                       fontSize: "1rem",
                     }}
-                    masks={{ ae: "+971 ... ... ...." }}
                   />
                 )}
               </Field>
