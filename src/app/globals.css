@@ -7,15 +7,39 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+
+  background-color: #fcfcfc;
+  background-image: repeating-linear-gradient(
+      45deg,
+      #ffffff 25%,
+      transparent 25%,
+      transparent 75%,
+      #ffffff 75%,
+      #ffffff
+    ),
+    repeating-linear-gradient(
+      45deg,
+      #ffffff 25%,
+      #fcfcfc 25%,
+      #fcfcfc 75%,
+      #ffffff 75%,
+      #ffffff
+    );
+  background-position: 0 0, 40px 40px;
+  background-size: 80px 80px;
+  font-family: "Manrope", Helvetica, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #364bfe;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d3bb9;
 }
