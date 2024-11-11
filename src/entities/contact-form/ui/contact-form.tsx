@@ -7,55 +7,29 @@ import TextArea from "antd/es/input/TextArea";
 import { Input } from "@/shared/ui/input/input";
 import { Button } from "@/shared/ui/button/button";
 import { Label } from "@/shared/ui/label/label";
+import { submitted } from "@/features/sendRequest/model";
+import { useUnit } from "effector-react";
 
 const initialValues = {
   name: "",
-  email: "",
   phoneNumber: "",
-  address: {
-    city: "",
-    streetName: "",
-    building: "",
-    doorNumber: "",
-    additionalInfo: "",
-  },
+  message: "",
 };
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Требуется имя"),
-  email: Yup.string().email("Неправильный e-mail").required("Требуется e-mail"),
   phoneNumber: Yup.string().required("Требуется номер телефона"),
-  address: Yup.object().shape({
-    city: Yup.string().required("Требуется город"),
-    streetName: Yup.string().required("Требуется улица"),
-    building: Yup.string(),
-    doorNumber: Yup.string(),
-    additionalInfo: Yup.string(),
-  }),
+  message: Yup.string(),
 });
 
 export const ContactForm = (): JSX.Element => {
+  const submit = useUnit(submitted);
   const handleSubmit = async (values: typeof initialValues) => {
-    try {
-      const response = await fetch("/api/submitContact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        throw new Error("Не удалось отправить данные");
-      }
-
-      const result = await response.json();
-      console.log("Результат:", result);
-      alert("Данные успешно отправлены!");
-    } catch (error) {
-      console.error("Ошибка при отправке данных:", error);
-      alert("Ошибка при отправке данных");
-    }
+    submit({
+      name: values.name,
+      phoneNumber: values.phoneNumber,
+      message: values.message,
+    });
   };
 
   return (
@@ -81,23 +55,6 @@ export const ContactForm = (): JSX.Element => {
               />
               <ErrorMessage
                 name="name"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Label htmlFor="email" className="mb-1">
-                Email
-              </Label>
-              <Field
-                name="email"
-                as={Input}
-                className="w-full"
-                placeholder="Введите ваш email"
-              />
-              <ErrorMessage
-                name="email"
                 component="div"
                 className="text-red-500 text-sm"
               />
@@ -147,87 +104,17 @@ export const ContactForm = (): JSX.Element => {
             </div>
 
             <div className="flex flex-col">
-              <Label htmlFor="address.city" className="mb-1">
-                Город
+              <Label htmlFor="message" className="mb-1">
+                Пожелания
               </Label>
               <Field
-                name="address.city"
-                as={Input}
-                className="w-full"
-                placeholder="Введите город"
-              />
-              <ErrorMessage
-                name="address.city"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <Label htmlFor="address.streetName" className="mb-1">
-                Адрес
-              </Label>
-              <Field
-                name="address.streetName"
-                as={Input}
-                className="w-full"
-                placeholder="Введите название улицы"
-              />
-              <ErrorMessage
-                name="address.streetName"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <div className="flex flex-col">
-                <Label htmlFor="address.building" className="mb-1">
-                  Дом
-                </Label>
-                <Field
-                  name="address.building"
-                  as={Input}
-                  className="w-full"
-                  placeholder="№ дома"
-                />
-                <ErrorMessage
-                  name="address.building"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <Label htmlFor="address.doorNumber" className="mb-1">
-                  Номер двери
-                </Label>
-                <Field
-                  name="address.doorNumber"
-                  as={Input}
-                  className="w-full"
-                  placeholder="№ квартиры/офиса"
-                />
-                <ErrorMessage
-                  name="address.doorNumber"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <Label htmlFor="address.additionalInfo" className="mb-1">
-                Доп. информация
-              </Label>
-              <Field
-                name="address.additionalInfo"
+                name="message"
                 as={TextArea}
                 className="w-full"
-                placeholder="Введите дополнительную информацию"
+                placeholder="Введите Ваши пожелания"
               />
               <ErrorMessage
-                name="address.additionalInfo"
+                name="message"
                 component="div"
                 className="text-red-500 text-sm"
               />

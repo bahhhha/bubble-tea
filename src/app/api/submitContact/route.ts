@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
+import { CartItem } from "@/features/addProduct/model";
 
 export async function POST(request: Request) {
   try {
-    const { name, email, phoneNumber, address } = await request.json();
+    const { name, phone, message, cart } = await request.json();
 
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -17,23 +18,18 @@ export async function POST(request: Request) {
     const spreadsheetId = process.env.SPREADSHEET_ID;
     const range = "Leads!A:M";
 
+    const cartData = cart
+      .map((item: CartItem) => {
+        const { name } = item.product;
+        return `${name} (${item.quantity})`;
+      })
+      .join("\n");
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range,
       valueInputOption: "RAW",
       requestBody: {
-        values: [
-          [
-            name,
-            email,
-            phoneNumber,
-            address.city,
-            address.streetName,
-            address.building,
-            address.doorNumber,
-            address.additionalInfo,
-          ],
-        ],
+        values: [[name, phone, message, cartData]],
       },
     });
 

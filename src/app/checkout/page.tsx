@@ -19,7 +19,7 @@ export default function Checkout() {
         <ChevronLeft size={16} />
       </Link>
       <div className="w-2/3 flex flex-col gap-4">
-        <p className="text-xl font-bold bg-zinc-50 p-4 rounded-lg">Cart</p>
+        <p className="text-xl font-bold bg-zinc-50 p-4 rounded-lg">Корзина</p>
         <div className="flex gap-4 flex-wrap">
           <AnimatePresence>
             {cartItems.map((cartItem, index) => (
@@ -48,7 +48,7 @@ export default function Checkout() {
           className="flex flex-col gap-4"
         >
           <p className="text-xl font-bold text-white bg-[#364bfe] p-4 rounded-lg">
-            Checkout
+            Контактная информация
           </p>
           <ContactForm />
         </motion.div>
